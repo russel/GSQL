@@ -1,8 +1,8 @@
 package org.javanicus.gsql
 
 public class Index implements Cloneable {
-    @Property name
-    @Property List indexColumns
+    def name
+    def List indexColumns
         
     public Index() {
         indexColumns = []

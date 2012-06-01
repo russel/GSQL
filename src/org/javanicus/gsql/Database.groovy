@@ -4,9 +4,9 @@ package org.javanicus.gsql
 //        something, even if it's null. Expando could either throw GroovyRuntimeException
 //        or this class could check for null return, and findTable() instead
 public class Database extends GroovyObjectSupport {
-    @Property name
-    @Property version
-    @Property List tables
+    String name
+    def version
+    List tables
 
     public Database(aName) {
         this.name = aName
@@ -30,8 +30,9 @@ public class Database extends GroovyObjectSupport {
             return findTable(propertyName)
         }
     }
+    
     public Table findTable(String aName) {
-        tables.find() {it.name.equalsIgnoreCase(aName)}
+        tables.find() {it.name.equalsIgnoreCase(aName) || it.groovyName.equals(aName)}
     }
 
     public String toString() {

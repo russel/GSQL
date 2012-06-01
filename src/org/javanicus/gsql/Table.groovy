@@ -1,21 +1,29 @@
 package org.javanicus.gsql
 
 public class Table extends GroovyObjectSupport implements Cloneable {
-    @Property catalog
-    @Property name
-    @Property groovyName
-    @Property schema
-    @Property remarks
-    @Property type
-    @Property List columns
-    @Property List foreignKeys
-    @Property List indexes
+    /** DB schema of the table */
+    String schema
+    /** Table name */
+    String name
+    /** Groovy name of the table if the table name is not groovy :-) */
+    String groovyName
+    /** Additional remarks */
+    String remarks
+    // ???
+    def type
+    /** An object which represents this table. This is used in the Select class. */
+    Class rowType
+    /** List of all columns in the table */
+    List columns
+    /** List of foreign keys of the table */
+    List foreignKeys
+    /** List of indexes on the table */
+    List indexes
     
     public Table(aName) {
-        catalog = null
+        schema = null
         name = aName
         groovyName = null
-        schema = null
         remarks = null
         type = null
         columns = []
@@ -26,12 +34,12 @@ public class Table extends GroovyObjectSupport implements Cloneable {
     public Object clone() { // throws CloneNotSupportedException {
         def result = new Table(name)
 
-        result.catalog     = catalog
+        result.schema      = schema
         result.name        = name
         result.groovyName  = groovyName
-        result.schema      = schema
         result.remarks     = remarks
         result.type        = type
+        result.rowType     = rowType
         result.columns     = columns.clone()
         result.foreignKeys = foreignKeys.clone()
         result.indexes     = indexes.clone()
@@ -48,11 +56,11 @@ public class Table extends GroovyObjectSupport implements Cloneable {
         indexes.findAll() {it.isUnique()}
     }
     
-    
     public boolean hasPrimaryKey() {
         def aPrimaryKeyColumn = getColumns().find() {it.isPrimaryKey()}
         return aPrimaryKeyColumn != null
-    }   
+    }
+    
     public Object getProperty(String propertyName) {
         try {
             return super.getProperty(propertyName);
@@ -60,26 +68,39 @@ public class Table extends GroovyObjectSupport implements Cloneable {
             return findColumn(propertyName);
         }
     }
+
+    /** Search a column by DB or Groovy name. The DB name is not case sensitive. */
     public Column findColumn(aName) {
-        // @todo
-        // warning 'name' inside closure refers to 'this.name', not method parameter called 'name' (in groovy 1.0b6) !!!
-        getColumns().find() {it.name.equalsIgnoreCase(aName)}
+        getColumns().find() {it.name.equalsIgnoreCase(aName) || it.groovyName.equals(aName)}
     }
 
+    /** Search an index by DB or Groovy name. The DB name is not case sensitive. */
     public Index findIndex(aName) {
-        getIndexes().find() {it.name.equalsIgnoreCase(aName)}
+        getIndexes().find() {it.name.equalsIgnoreCase(aName) || it.groovyName.equals(aName)}
     }
 
+    /** Get a list of all primary keys */
     public List getPrimaryKeyColumns() {
         getColumns().findAll() {it.isPrimaryKey()}
     }
 
+    /** Get a list of all autoIncrement columns */
     public Column getAutoIncrementColumn() {
         getColumns().find() {it.isAutoIncrement()}
     }
     
     public String toString() {
-        "Table[name=${name};columnCount=${columns.size()}]"
+        "Table[schema=${schema};name=${name};columnCount=${columns.size()}]"
     }
 
+    public Table addColumn(Column col) {
+        columns.add (col);
+        col.table = this
+        return this
+    }
+    
+    void init () {
+        if (!groovyName)
+            groovyName = name
+    }
 }

@@ -1,17 +1,18 @@
 package org.javanicus.gsql
 
 class DatabaseTest extends GroovyTestCase {
-    @Property table
-    @Property idColumn
-    @Property fred
-    @Property barney
-    @Property wilma
-    @Property db1
-    @Property db2
+    def typeMap
+    def table
+    def idColumn
+    def fred
+    def barney
+    def wilma
+    def db1
+    def db2
               
     void setUp() {
         typeMap = new TypeMap()          
-        idColumn = new Column(typeMap,"id","id",0,"10",true,true,true,null)     
+        idColumn = new Column(typeMap,name:"id",type:0,size:10,required:true,required:true,autoIncrement:true)     
                   
         fred = new Table("fred")
         fred.columns << idColumn

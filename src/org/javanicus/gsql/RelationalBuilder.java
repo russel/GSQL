@@ -7,7 +7,6 @@
 package org.javanicus.gsql;
 
 import java.util.*;
-import groovy.lang.Closure;
 import groovy.util.BuilderSupport;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
@@ -39,7 +38,7 @@ public class RelationalBuilder extends BuilderSupport {
         if (child instanceof Column) {
             if (parent instanceof Table) {
                 Table table = (Table)parent;
-                table.getColumns().add(child);
+                table.addColumn((Column)child);
             }
         }
         if (child instanceof ForeignKey) {
@@ -114,6 +113,7 @@ public class RelationalBuilder extends BuilderSupport {
         public Object make(String nodeName, Map attributes, Object value) {
             Table table = new Table(nodeName);
             setAttributes(table,attributes);
+            table.init();
             return table;
         }
     }
@@ -121,6 +121,7 @@ public class RelationalBuilder extends BuilderSupport {
         public Object make(String nodeName, Map attributes, Object value) {
             Column column = new Column(typeMap);
             setAttributes(column,attributes);
+            column.init();
             return column;
         }
     }

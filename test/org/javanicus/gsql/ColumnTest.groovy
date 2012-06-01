@@ -1,34 +1,51 @@
 package org.javanicus.gsql
 
+import java.sql.Types
+
 class ColumnTest extends GroovyTestCase {
-    @Property column
-    @Property idColumn
-    @Property nameColumn
-    @Property yearOfBirthColumn          
+    def typeMap
+    def column
+    def idColumn
+    def nameColumn
+    def yearOfBirthColumn          
               
     void setUp() {
         TypeMap typeMap = new TypeMap()          
-        column = new Column(typeMap)
-        idColumn = new Column(typeMap,"id","id",0,"10",true,true,true,null)     
-        nameColumn = new Column(typeMap,"name","name",0,"250",true,false,false,"<no name>")
-        yearOfBirthColumn = new Column(typeMap,"year of birth","yearOfBirth",0,"4",false,false,false,null,0)
+        column = new Column(typeMap,size:"10,2")
+        idColumn = new Column(typeMap,name:"ghx_id",groovyName:"id",type:0,size:10,required:true,required:true,autoIncrement:true)     
+        nameColumn = new Column(typeMap,name:"name",type:"VARCHAR",size:"250",required:true,defaultValue:"<no name>")
+        yearOfBirthColumn = new Column(typeMap,name:"year of birth",groovyName:"yearOfBirth",type:Types.INTEGER,size:"4")
     }
     
-    void testPrimaryKey() { //todo: throws Exception {
+    void testPrimaryKey() {
         assert false == column.isPrimaryKey()
     }
     
+    void testDBName() {
+        assert "ghx_id" == idColumn.name
+        assert "id" == idColumn.groovyName
+    }
+    
     void testSizeAndScale() {
-        column.size = "10,2"
+        assert 10 == column.size
         assert 2 == column.scale
-        //bug? can't initialise properly (null not zero) - see constructor in Column.groovy
-        //assert 0 == nameColumn.scale          
+        assert 250 == nameColumn.size          
+        assert 0 == nameColumn.scale          
+        assert 4 == yearOfBirthColumn.size          
         assert 0 == yearOfBirthColumn.scale          
     }
     
     void testTypeNameHasBeenInitialisedWhenOnlyColumnTypeHasBeenSet() {
-        assert "null" == idColumn.type
+        assertEquals ("NULL", idColumn.type)
     }
     
+    void testNameTypes() {
+        assert "VARCHAR" == nameColumn.type
+        assert Types.VARCHAR == nameColumn.typeCode
+    }
     
+    void testYearTypes() {
+        assertEquals("INTEGER", yearOfBirthColumn.type)
+        assert Types.INTEGER == yearOfBirthColumn.typeCode
+    }
 }

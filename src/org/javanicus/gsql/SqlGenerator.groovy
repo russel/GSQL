@@ -12,28 +12,28 @@
 package org.javanicus.gsql
 
 public class SqlGenerator {
-    @Property lineSeparator
+    def lineSeparator
               
     /** The current Writer used to output the SQL to */
-    @Property writer
+    def writer
     
     /** The indentation used to indent commands */
-    @Property indent
+    def indent
     
     /** Whether or not primary key constraints are embedded inside the create table statement, the default is true */
-    @Property primaryKeyEmbedded
+    def primaryKeyEmbedded
     
     /** Whether or not foreign key constraints are embedded inside the create table statement */
-    @Property foreignKeysEmbedded
+    def foreignKeysEmbedded
               
     /** Whether or not indexes are embedded inside the create table statement */
-    @Property indexesEmbedded
+    def indexesEmbedded
     
     /** Should foreign key constraints be explicitly named */
-    @Property foreignKeyConstraintsNamed
+    def foreignKeyConstraintsNamed
     
     /** Is an ALTER TABLE needed to drop indexes? */
-    @Property alterTableForDrop
+    def alterTableForDrop
     
     /** A counter used to count the constraints */
     private counter
@@ -103,7 +103,10 @@ public class SqlGenerator {
       */
     public void tableComment(table) { //@todo throws IOException {
         wprintComment("-----------------------------------------------------------------------")
-        wprintComment(table.name)
+        String s = ''
+        if (table.schema)
+            s = "${table.schema}."
+        wprintComment("${s}${table.name}")
         wprintComment("-----------------------------------------------------------------------")
         wprintln()
     }
@@ -120,7 +123,10 @@ public class SqlGenerator {
       * Outputs the DDL to create the table along with any non-external constraints
       */
     public void createTable(table) { //@todo throws IOException {
-        wprintln("create table ${table.name} (")
+        String s = ''
+        if (table.schema)
+            s = "${table.schema}."
+        wprintln("create table ${s}${table.name} (")
         
         writeColumnTypes(table)
         
@@ -249,11 +255,11 @@ public class SqlGenerator {
      * @return the full SQL type string including the size
      */
     String getSqlType(Column column) {
-        nativeType = getNativeType(column)
-        sqlType = new StringBuffer()          
+        def nativeType = getNativeType(column)
+        def sqlType = new StringBuffer()          
         if (nativeType != null) {
             sqlType.append(nativeType)
-            if ( column.size != null ) {
+            if ( column.size != null && column.size.intValue() != 0 ) {
                 sqlType.append(" (${column.size}")
                 if ( typeMap.isDecimalType(column.type) ){
                     sqlType.append(",${column.scale}")

@@ -1,21 +1,23 @@
 package org.javanicus.gsql
 
 class TableTest extends GroovyTestCase {
-    @Property table
-    @Property idColumn
-    @Property nameColumn
+    def typeMap
+    def table
+    def idColumn
+    def nameColumn
               
     void setUp() {
         typeMap = new TypeMap()          
-        idColumn = new Column(typeMap,"id","id",0,"10",true,true,true,null)     
-        nameColumn = new Column(typeMap,"name","name",0,"250",true,false,false,"<no name>")
+        idColumn = new Column(typeMap,name:"id",type:0,size:10,required:true,primaryKey:true,autoIncrement:true)     
+        nameColumn = new Column(typeMap,name:"name",type:0,size:"250",required:true,defaultValue:"<no name>")
         table = new Table("wheelbarrow")
-        table.columns << idColumn          
-        table.columns << nameColumn     
+        table.schema = 'test'
+        table.addColumn(idColumn)          
+        table.addColumn(nameColumn)     
     }
     
-    void testPrimaryKey() { //todo: throws Exception {
-        
+    void testPrimaryKey()
+    {
         // @todo wouldn't it be groovy to have the inverse of
         // the contains() method, on Object, such that you
         // could express "if idColumn.isIn(table.primaryKeyColumns) {"

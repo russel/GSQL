@@ -7,10 +7,13 @@
 package org.javanicus.gsql
 
 import java.io.*
+import java.sql.Types
 
 class SqlGeneratorTest extends GroovyTestCase {
-    @Property database
-    @Property sqlGenerator
+    def typeMap
+    def build
+    def database
+    def sqlGenerator
               
     void setUp() {
         typeMap = new TypeMap()          
@@ -19,13 +22,14 @@ class SqlGeneratorTest extends GroovyTestCase {
                   
         database = build.database(name:'genealogy') {
           table(name:'event') {
-              column(name:'event_id', type:'integer', size:10, primaryKey:true, required:true)
+              column(name:'event_id', groovyName:'id', type:'integer', size:10, primaryKey:true, required:true)
               column(name:'description', type:'varchar', size:30)          
           }
-          table(name:'individual') {
+          table(schema:'xxx', name:'individual') {
             column(name:'individual_id', type:'integer', size:10, required:true, primaryKey:true, autoIncrement:true)
             column(name:'surname', type:'varchar', size:15, required:true)
             column(name:'event_id', type:'integer', size:10)
+            column(name:'num', type:Types.DECIMAL, size:'7,2')
             foreignKey(foreignTable:'event') {
                 reference(local:'event_id',foreign:'event_id')
             }
@@ -37,10 +41,45 @@ class SqlGeneratorTest extends GroovyTestCase {
     }
     
     void testGenerateDDL() {
-        testWriter = new PrintWriter(new FileOutputStream("SqlGeneratorTest.sql"))
+        def testWriter = new StringWriter()
         sqlGenerator.writer = testWriter
         sqlGenerator.createDatabase(database,true)
-        testWriter.flush()
+        def expected = """\
+drop table individual;
+
+drop table event;
+
+-- -----------------------------------------------------------------------
+-- event
+-- -----------------------------------------------------------------------
+
+create table event (
+    event_id integer (10) NOT NULL , 
+    description varchar (30)  ,
+    PRIMARY KEY (event_id)
+);
+
+ALTER TABLE event
+    ADD CONSTRAINT event_PK
+PRIMARY KEY (event_id);
+
+
+-- -----------------------------------------------------------------------
+-- xxx.individual
+-- -----------------------------------------------------------------------
+
+create table xxx.individual (
+    individual_id integer (10) NOT NULL IDENTITY, 
+    surname varchar (15) NOT NULL , 
+    event_id integer (10)  , 
+    num DECIMAL (7,2)  
+);
+
+"""
+        def s = testWriter.toString()
+        expected = expected.replaceAll("\r\n", "\n");
+        s = s.replaceAll("\r\n", "\n");
+        assertEquals (expected, s)
    }
 
 }

@@ -3,51 +3,54 @@ package org.javanicus.gsql
 import java.sql.Types
 
 public class TypeMap {
-    @Property nameToCode
-    @Property codeToName
-    @Property decimalTypes
-    @Property textTypes
-    @Property otherTypes
-              
+    def nameToCode
+    def codeToName
+    def decimalTypes
+    def textTypes
+    def otherTypes
+    
+    /** Overwrite this to change the default typemap */
+    static TypeMap DEFAULT = new TypeMap ()
+    
     public TypeMap() {
         nameToCode = [:]
         codeToName = [:]
                   
         decimalTypes = [
-            "numeric" : Types.NUMERIC,
-            "decimal" : Types.DECIMAL,
-            "float" : Types.FLOAT,
-            "real" : Types.REAL,
-            "double" : Types.DOUBLE
+            "NUMERIC" : Types.NUMERIC,
+            "DECIMAL" : Types.DECIMAL,
+            "FLOAT" : Types.FLOAT,
+            "REAL" : Types.REAL,
+            "DOUBLE" : Types.DOUBLE
         ]
         textTypes = [
-            "char" : Types.CHAR,
-            "varchar" : Types.VARCHAR,
-            "longvarchar" : Types.LONGVARCHAR,
-            "clob" : Types.CLOB,
-            "date" : Types.DATE,
-            "time" : Types.TIME,
-            "timestamp" : Types.TIMESTAMP
+            "CHAR" : Types.CHAR,
+            "VARCHAR" : Types.VARCHAR,
+            "LONGVARCHAR" : Types.LONGVARCHAR,
+            "CLOB" : Types.CLOB,
+            "DATE" : Types.DATE,
+            "TIME" : Types.TIME,
+            "TIMESTAMP" : Types.TIMESTAMP
         ]
         otherTypes = [
-            "bit" : Types.BIT,
-            "tinyint" : Types.TINYINT,
-            "smallint" : Types.SMALLINT,
-            "integer" : Types.INTEGER,
-            "bigint" : Types.BIGINT,
-            "binary" : Types.BINARY,
-            "varbinary" : Types.VARBINARY,
-            "longvarbinary" : Types.LONGVARBINARY,
-            "null" : Types.NULL,
-            "other" : Types.OTHER,
-            "java_object" : Types.JAVA_OBJECT,
-            "distinct" : Types.DISTINCT,
-            "struct" : Types.STRUCT,
-            "array" : Types.ARRAY,
-            "blob" : Types.BLOB,
-            "ref" : Types.REF,
-            "datalink" : Types.DATALINK,
-            "boolean" : Types.BOOLEAN
+            "BIT" : Types.BIT,
+            "TINYINT" : Types.TINYINT,
+            "SMALLINT" : Types.SMALLINT,
+            "INTEGER" : Types.INTEGER,
+            "BIGINT" : Types.BIGINT,
+            "BINARY" : Types.BINARY,
+            "VARBINARY" : Types.VARBINARY,
+            "LONGVARBINARY" : Types.LONGVARBINARY,
+            "NULL" : Types.NULL,
+            "OTHER" : Types.OTHER,
+            "JAVA_OBJECT" : Types.JAVA_OBJECT,
+            "DISTINCT" : Types.DISTINCT,
+            "STRUCT" : Types.STRUCT,
+            "ARRAY" : Types.ARRAY,
+            "BLOB" : Types.BLOB,
+            "REF" : Types.REF,
+            "DATALINK" : Types.DATALINK,
+            "BOOLEAN" : Types.BOOLEAN
         ]
         for (entries in decimalTypes.entrySet()) {
             crossRef(entries.key,entries.value)          
@@ -67,7 +70,7 @@ public class TypeMap {
     }
     
     public int getJdbcTypeCode(String name) {
-        return nameToCode.get(name,Types.OTHER)
+        return nameToCode.get(name.toUpperCase(),Types.OTHER)
     }
 
     public String getJdbcTypeName(int code) {
@@ -94,4 +97,13 @@ public class TypeMap {
         }
     }
     
+    public boolean isTextType(int type) {
+        return isTextType(getJdbcTypeName(type))
+    }
+    
+    public boolean isTextType(String type) {
+        return textTypes.keySet().any {
+            type.equalsIgnoreCase(it)
+        }
+    }
 }

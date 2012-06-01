@@ -8,8 +8,9 @@
 package org.javanicus.gsql
 
 class RelationalBuilderTest extends GroovyTestCase {
-    @Property database
-    @Property table
+    def build
+    def database
+    def table
               
     void setUp() {
         build = new RelationalBuilder(new TypeMap())
