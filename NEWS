@@ -1,0 +1,38 @@
+GSQL 1.1:
+=========
+
+- No size/scale for types which have no size (like INTEGER)
+- New class Select which can be used to build SELECT statements
+  including joins, upper limit for returned rows, ordering,
+  grouping, etc.
+- New class DataSourceProvider which provides a global datasource. Useful
+  if you need only a single datasource.
+- Data from the database can read into POJOs.
+- Select can handle arbitrary large results.
+- The "size" field can now be an int or a String like "10,2" for
+  DECIMAL(10,2).
+- The type can be a string or a constant from java.sql.Types.
+- Each column has now a "groovyName" which allows you to map arbitrary
+  DB names to properties. These names can also be used to lookup
+  columns in results or when building SELECT statements to make your
+  code more readable.
+- There is a special class called SQLResultObject which can be used
+  to build business objects that are filled with data from the DB using
+  the Select class. Unlike Expando, the derived classes can have
+  extra properties.
+
+Open issues:
+
+- Logging in Select via log4j because java.logging is swallowed inside of
+  Tomcat. This violates the standard Groovy logging rules.
+- The code in groovy.sql.Sql expects the user to pass in a datasource.
+  The Select class expects the datasource from DataSourceProvider. It
+  should also allow to pass in a datasource or connection.
+- The ant build.xml doesn't work ATM.
+- DynaObject should be merged with Expando.
+
+GSQL 1.0:
+=========
+
+Copied from old GSQL sources
+

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>groovy</groupId>
+  <artifactId>GSQL</artifactId>
+  <version>1.1-SNAPSHOT</version>
+  <name>Groovy SQL</name>
+  <description>Groovy SQL support framework</description>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+    	<resource>
+    		<directory>src</directory>
+    		<excludes>
+    			<exclude>**/*.java</exclude>
+    			<exclude>**/*.groovy</exclude>
+    		</excludes>
+    	</resource>
+    </resources>
+    <testSourceDirectory>test</testSourceDirectory>
+    <testResources>
+    	<testResource>
+    		<directory>test</directory>
+    		<excludes>
+    			<exclude>**/*.java</exclude>
+    			<exclude>**/*.groovy</exclude>
+    		</excludes>
+    	</testResource>
+    </testResources>
+  	<plugins>
+  		<!-- Compile a few Java files before groovyc needs them -->
+  		<plugin>
+  			<artifactId>maven-antrun-plugin</artifactId>
+  			<executions>
+  				<execution>
+  					<id>generate-resources</id>
+  					<phase>generate-resources</phase>
+  					<goals><goal>run</goal></goals>
+  					<configuration>
+  						<tasks>
+  							<mkdir dir="${pom.basedir}/target/classes" />
+  							<javac destdir="${pom.basedir}/target/classes"
+  								debug="on" source="1.4" target="1.4" fork="yes">
+  								<classpath refid="maven.test.classpath" />
+  								<src path="${pom.basedir}/src" />
+  								<include name="**/IColumn.java" />
+  								<include name="**/DBMapper.java" />
+ 							</javac>
+
+<!-- 
+  							<mkdir dir="${pom.basedir}/target/test-classes" />
+  							<javac destdir="${pom.basedir}/target/test-classes"
+  								debug="on" source="1.4" target="1.4" fork="yes">
+  								<classpath refid="maven.test.classpath" />
+  								<src path="${pom.basedir}/test" />
+  								<include name="**/Xxx.java" />
+ 							</javac>
+ --> 							
+  						</tasks>
+  					</configuration>
+  				</execution>
+			</executions>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.codehaus.mojo</groupId>
+  			<artifactId>groovy-maven-plugin</artifactId>
+  			<version>1.0-alpha-2-SNAPSHOT</version>
+  			<executions>
+  				<execution>
+  					<id>compile</id>
+					<!-- Run groovyc before the Java compiler -->
+					<phase>process-resources</phase>
+  					<goals>
+  						<goal>compile</goal>
+  					</goals>
+  					<configuration>
+  						<debug>false</debug>
+  						<verbose>true</verbose>
+  						<sources>
+  							<fileset>
+  								<directory>${pom.basedir}/src</directory>
+  								<includes>
+  									<include>**/*.groovy</include>
+  								</includes>
+  							</fileset>
+  						</sources>
+  					</configuration>
+  				</execution>
+  				<execution>
+  					<id>testCompile</id>
+					<phase>test-compile</phase>
+  					<goals>
+  						<goal>testCompile</goal>
+  					</goals>
+  					<configuration>
+  						<debug>false</debug>
+  						<verbose>true</verbose>
+  						<sources>
+  							<fileset>
+  								<directory>${pom.basedir}/test</directory>
+  								<includes>
+  									<include>**/*.groovy</include>
+  								</includes>
+  							</fileset>
+  						</sources>
+  					</configuration>
+  				</execution>
+  			</executions>
+  		</plugin>
+    	<plugin>
+    		<artifactId>maven-surefire-plugin</artifactId>
+    		<version>2.3</version>
+   		</plugin>
+  	</plugins>
+  </build>
+  <reporting>
+  	<plugins>
+			<!-- Zusätzlich die Ergebnisse der Testfälle in die Website einbinden
+				 http://maven.apache.org/plugins/maven-surefire-report-plugin/howto.html -->
+			<plugin>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+  	</plugins>
+  </reporting>
+  <dependencies>
+    <dependency>
+    	<groupId>groovy</groupId>
+    	<artifactId>groovy-all</artifactId>
+    	<version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <!-- Include the Codehaus snapshot repository so Maven2 can find the groovy plugin -->
+  <repositories>
+    <repository>
+      <id>codehaus-snapshots</id>
+      <name>Codehaus Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+</project>
+
