@@ -1,3 +1,7 @@
+- Introduced a Gradle build to replace the Ant and Maven builds.
+- Used Groovy 2.0.0
+
+
 GSQL 1.5:
 =========
 
