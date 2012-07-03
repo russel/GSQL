@@ -1,2 +1,6 @@
 /.gradle/
 *~
+.classpath
+.project
+/.settings/
+GSQL.i*
