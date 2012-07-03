@@ -5,8 +5,9 @@ GSQL 1.1:
 - New class Select which can be used to build SELECT statements
   including joins, upper limit for returned rows, ordering,
   grouping, etc.
-- New class DataSourceProvider which provides a global datasource. Useful
-  if you need only a single datasource.
+- New class DataSourceProvider which provides a global datasource. If
+  you don't set a specific datasource in a Select object, it will try
+  to use this provider to find one.
 - Data from the database can read into POJOs.
 - Select can handle arbitrary large results.
 - The "size" field can now be an int or a String like "10,2" for
@@ -25,9 +26,6 @@ Open issues:
 
 - Logging in Select via log4j because java.logging is swallowed inside of
   Tomcat. This violates the standard Groovy logging rules.
-- The code in groovy.sql.Sql expects the user to pass in a datasource.
-  The Select class expects the datasource from DataSourceProvider. It
-  should also allow to pass in a datasource or connection.
 - The ant build.xml doesn't work ATM.
 - DynaObject should be merged with Expando.
 
