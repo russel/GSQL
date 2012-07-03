@@ -46,6 +46,41 @@ org.javanicus.gsql.SelectResultSetTest_A@cafe (id=3, b=true, l=-9223372036854775
 org.javanicus.gsql.SelectResultSetTest_A@cafe (id=2, b=false, l=4294967296, c="y", bigInt=4294967296, bigDec=0.0001, s="a2")\
 '''.replaceAll('\r\n', '\n'), results.join('\n'))
     }
+
+    void testToString() {
+        def select = new Select(db)
+        select.all(db.a)
+        select.where = new WhereCondition (select.whereColumn(db.a.id), '=', '?')
+        select.param = [2]
+
+        String s;
+        select.rawExecute() {
+            s = DBUtil.toString(it)
+	}
+
+        assertEquals ('''\
+groovy.sql.GroovyResultSet@unknown (A_ID=2, B="No", L=4294967296, C="y", BIG_INT=4294967296, BIG_DEC=0.0001, S="a2")\
+'''.replaceAll('\r\n', '\n'),
+                SQLResultObjectTest.fixDynaObject(s))
+    }
+
+    void testToString2() {
+        def select = new Select(db)
+        select.all(db.a)
+        select.where = new WhereCondition (select.whereColumn(db.a.id), '=', '?')
+        select.param = [2]
+
+	String s;
+        select.rawExecute() {
+            // BUG: it.toString() throws groovy.lang.MissingMethodException: No signature of method: groovy.sql.GroovyResultSet.toString() is applicable for argument types: () values: {}
+            s = "${it}"
+	}
+
+        assertEquals ('''\
+[A_ID:2, B:No, L:4294967296, C:y, BIG_INT:4294967296, BIG_DEC:0.0001, S:a2]\
+'''.replaceAll('\r\n', '\n'),
+		SQLResultObjectTest.fixDynaObject(s))
+    }
     
     // Test whether the tool can distinguish A.S and B.S
     void testAB() {

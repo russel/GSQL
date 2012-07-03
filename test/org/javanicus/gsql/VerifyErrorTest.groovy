@@ -2,7 +2,10 @@ package org.javanicus.gsql;
 
 class VerifyErrorTest extends GroovyTestCase {
     void testBug() {
+	// This bug was fixed in Groovy 1.5
+	// In Groovy 1.0, you would get
         //java.lang.VerifyError: (class: org/javanicus/gsql/VerifyErrorDemo, method: setProperty signature: (Ljava/lang/String;Ljava/lang/Object;)V) Inconsistent stack height 1 != 0
+	// after activating the next line:
         //def o = new VerifyErrorDemo ()
     }
 }

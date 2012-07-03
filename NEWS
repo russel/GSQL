@@ -1,3 +1,31 @@
+GSQL 1.5:
+=========
+
+- Ported to Groovy 1.5.4. Versions upto Groovy 1.5.3 will *not* work. 
+- Slightly improved the Join syntax: Join objects now have a
+  whereColumn() which you can use to create correct WHERE conditions.
+- Classes derived from DynaObjects can now have properties just like
+  any other class.
+- By implementing additionalPropertiesToString(), you can add them to
+  the result of the default implementation of toString() in DynaClass.
+- The dynamic properties of DynaObjects are now stored in a field
+  called "__do_propertySet" to avoid name clashes in derived classes.
+- Added a couple of helper classes to talk to a database. DBOp allows
+  to define a closure-like object which gets invoked for every row
+  read from the database. PrintDBOp will print the rows to the console,
+  ExportDBOp allows to quickly create exporters for data from the
+  database, for example, to create CSV files.
+- DBUtil contains a couple of helper methods when working with
+  databases. Highlights:
+    - Methods to convert java.lang.Date to java.sql.Date, Time
+      and Timestamp
+    - Methods to quickly convert results from the database to
+      strings for debugging
+    - Methods to close all kinds of database objects without
+      throwing exceptions. They are logged with log4j, instead.
+    - Helper methods to execute queries and statements
+- A couple of other small bugfixes and enhancements.
+
 GSQL 1.1:
 =========
 

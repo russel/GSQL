@@ -19,6 +19,9 @@ class SelectColumn {
     
     public void setColumn (Column column)
     {
+	if (!column)
+	    throw new IllegalArgumentException ('column is null')
+	
         this.column = column
         if (alias == null)
             alias = column.name

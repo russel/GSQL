@@ -115,6 +115,7 @@ class SelectResultSet {
             properties[type.key] = obj.getProperties ()
         }
 //        println "objects=${objects}"
+//        println DBUtil.toString(it)
         
         // Copy the data for each column into the right object
         for (col in 0..<objectIndexPerColumn.size)
@@ -125,6 +126,7 @@ class SelectResultSet {
 
             def idx = objectIndexPerColumn[col]
             properties[idx].put (propertyPerColumn[col], value)
+//	    println "${col}: ${propertyPerColumn[col]} = ${value}"
         }
 //        println objects
     }

@@ -105,7 +105,7 @@ class SelectTest extends GroovyTestCase {
         def join = s.join(database.individual) { join ->
             // Define the condition which joins the two tables.
             // Select.whereColumn() will return the correct names for each column
-            join.condition = new WhereCondition (s.whereColumn(database.event.id), '=', s.whereColumn(database.individual.event_id))
+            join.condition = new WhereCondition (s.whereColumn(database.event.id), '=', join.whereColumn(database.individual.event_id))
         }
         
         s.where = new WhereCondition (s.whereColumn(database.individual.price), '>', '?')

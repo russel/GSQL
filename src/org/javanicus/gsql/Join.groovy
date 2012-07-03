@@ -13,4 +13,8 @@ class Join
     String toString () {
         return " ${type} ${alias} ON ${condition}"
     }
+
+    SelectColumn whereColumn (Column column) {
+        return new SelectColumn (tableAlias:this, column:column)
+    }
 }

@@ -9,30 +9,30 @@ package org.javanicus.gsql
  */
 class DynaObject {
     /** Ordered set for quick lookup if a propery belongs to this class. */
-    LinkedHashSet propertySet
+    LinkedHashSet __do_propertySet
     /** The real values */
-    Map values
+    Map __do_values
 
     DynaObject (Collection properties) {
-        this.propertySet = new HashSet ()
-        this.propertySet.addAll (properties)
-        this.values = [:]
+        this.__do_propertySet = new HashSet ()
+        this.__do_propertySet.addAll (properties)
+        this.__do_values = [:]
     }
     
     void setProperty(String property, Object value) {
-        if (propertySet.contains(property)) {
-            values[property] = value
+        if (__do_propertySet.contains(property)) {
+            __do_values[property] = value
         } else {
-            getMetaClass().setProperty(getClass(), this, property, value, true, true)
+            getMetaClass().setProperty(getClass(), this, property, value, false, true)
         }
     }
     
     Object getProperty(String property) {
-        if (propertySet.contains(property)) {
-            return values[property]
+        if (__do_propertySet.contains(property)) {
+            return __do_values[property]
         }
         
-        return getMetaClass().getProperty(getClass(), this, property, true, true)
+        return getMetaClass().getProperty(getClass(), this, property, false, true)
     }
     
     /** Dump this object into a String. The result will contain all values of all properties in the order
@@ -44,7 +44,7 @@ class DynaObject {
         buffer << '@'
         buffer << hashCode()
         def delim = ' ('
-        for (property in propertySet) {
+        for (property in __do_propertySet) {
             buffer << delim
             delim = ', '
             buffer << property
@@ -52,8 +52,16 @@ class DynaObject {
             def value = toString (getProperties().get(property))
             buffer << value
         }
+	additionalPropertiesToString (buffer)
         buffer << ')'
         return buffer.toString()
+    }
+
+    /**
+     * Derived classes can override this method to append additional properties
+     * to the result of toString()
+     */
+    void additionalPropertiesToString (StringBuffer buffer) {
     }
     
     String toString (value) {
@@ -68,26 +76,26 @@ class DynaObject {
     
     /** Copy all properties of another object into this one. */
     void copy (other) {
-        for (propName in propertySet) {
+        for (propName in __do_propertySet) {
             // TODO Ignore missing properties?
             setProperty (propName, other.getProperty (propName))
         }
     }
     
-    /** Getter for the properties because it's not possible to use "obj.propertySet" */
+    /** Getter for the properties because it's not possible to use "obj.__do_propertySet" */
     Set getPropertySequence () {
-        return propertySet
+        return __do_propertySet
     }
     
     Map getProperties() {
-        return values
+        return __do_values
     }
     
     /** Clone this instance */
     def clone () {
         Class c = this.getClass()
-        DynaObject o = c.newInstance (propertySet)
-        o.getProperties ().putAll (values)
+        DynaObject o = c.newInstance (__do_propertySet)
+        o.getProperties ().putAll (__do_values)
         return o
     }
 }

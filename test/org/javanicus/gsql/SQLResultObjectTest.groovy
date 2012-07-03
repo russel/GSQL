@@ -5,7 +5,7 @@ class SQLResultObjectTest extends GroovyTestCase {
 
     void testOrder() {
         def o = new SQLResultObjectTest_Dummy ()
-        assertEquals('org.javanicus.gsql.SQLResultObjectTest_Dummy@cafe (a=null, x=null, b=null)', fixDynaObject(o.toString()))
+        assertEquals('org.javanicus.gsql.SQLResultObjectTest_Dummy@cafe (a=null, x=null, b=null, y=1)', fixDynaObject(o.toString()))
     }
     
     void testDefined() {
@@ -15,7 +15,7 @@ class SQLResultObjectTest extends GroovyTestCase {
         assert true == o.isDefined('a')
         assert false == o.isDefined('x')
         assert true == o.isDefined('b')
-        assertEquals('org.javanicus.gsql.SQLResultObjectTest_Dummy@cafe (a=null, x=null, b="")', fixDynaObject(o.toString()))
+        assertEquals('org.javanicus.gsql.SQLResultObjectTest_Dummy@cafe (a=null, x=null, b="", y=1)', fixDynaObject(o.toString()))
     }
 
     void testAccessors() {
@@ -35,17 +35,17 @@ class SQLResultObjectTest extends GroovyTestCase {
         def o = new ExpandoTest ()
         o.a = 'test'
         assert 'test' == o.a
-        assert 1 == o.y
         assert 1 == o.getter()
+        assert 1 == o.y
         //o.y = 2
-        o.metaClass.setProperty(ExpandoTest.class, o, 'y', 2, true, true)
+        o.metaClass.setProperty(ExpandoTest.class, o, 'y', 2, false, true)
         //o.metaClass.setProperty(ExpandoTest.class, o, 'a', 'xxx', true, true)
         o.a = 'xxx'
         assert 2 == o.y
-        assert 2 == o.getter()
+        assert 2 == o.getter(), "2 == ${o.getter()}"
         assert 'xxx' == o.a
     }
-    
+
     void testPrecedence() {
         def o = new PrecedenceTest()
         o.x = 'a'
@@ -54,6 +54,16 @@ class SQLResultObjectTest extends GroovyTestCase {
         assertEquals('a', o.x)
         assertEquals('a', o.getProperties()['x'])
         assertNull(o.getter())
+    }
+    
+    void testUndefined() {
+	def o = new SQLResultObjectTest_Dummy ()
+	try {
+	    def dummy = o.dummy
+	    fail("Access didn't throw an exception")
+	} catch (MissingPropertyException e) {
+	    assert 'No such property: dummy for class: org.javanicus.gsql.SQLResultObjectTest_Dummy' == e.message
+	}
     }
     
     /** Fixate the String returned by DynaObject.toString(), i.e. replace the
@@ -74,6 +84,14 @@ class SQLResultObjectTest_Dummy extends SQLResultObject {
     int getter() {
         return this.y
     }
+
+    void additionalPropertiesToString (StringBuffer buffer) {
+	super.additionalPropertiesToString (buffer)
+
+	buffer << ', y='
+	buffer << y
+    }
+
 }
 
 class PrecedenceTest extends SQLResultObject {
