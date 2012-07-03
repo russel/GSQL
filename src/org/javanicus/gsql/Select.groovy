@@ -34,6 +34,8 @@ class Select
     int maxRows = Integer.MAX_VALUE
     /** true, if maxRows was reached. */
     boolean maxRowsReached
+    
+    def datasource // javax.sql.DataSource or java.sql.Connection or null
 
     Select (db)
     {
@@ -280,7 +282,6 @@ class Select
         if (closure == null)
             throw new IllegalArgumentException ("closure is null")
         
-        Sql sql = new Sql (DataSourceProvider.DEFAULT.getDataSource (db))
         def mapper = new SelectResultSet (this)
         def query = getSQL ()
         
@@ -295,6 +296,7 @@ class Select
         
         try
         {
+            Sql sql = createSql()
             sql.eachRow (query, args) {
                 count ++;
                 if (count > maxRows)
@@ -325,7 +327,6 @@ class Select
         if (closure == null)
             throw new IllegalArgumentException ("closure is null")
         
-        Sql sql = new Sql (DataSourceProvider.DEFAULT.getDataSource (db))
         def query = getSQL ()
 
         if (log.isDebugEnabled ())
@@ -339,6 +340,7 @@ class Select
         
         try
         {
+            Sql sql = createSql()
             sql.eachRow (query, args) {
                 count ++;
                 if (count > maxRows)
@@ -351,5 +353,14 @@ class Select
         {
             maxRowsReached = true;
         }
+    }
+    
+    Sql createSql ()
+    {
+        def arg = datasource
+        if (arg == null)
+            arg = DataSourceProvider.DEFAULT.getDataSource (db)
+        
+        return new Sql(arg)
     }
 }
