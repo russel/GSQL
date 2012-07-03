@@ -12,7 +12,7 @@ class ColumnTest extends GroovyTestCase {
     void setUp() {
         TypeMap typeMap = new TypeMap()          
         column = new Column(typeMap,size:"10,2")
-        idColumn = new Column(typeMap,name:"ghx_id",groovyName:"id",type:0,size:10,required:true,required:true,autoIncrement:true)     
+        idColumn = new Column(typeMap,name:"ghx_id",groovyName:"id",type:0,size:10,required:true,,autoIncrement:true)
         nameColumn = new Column(typeMap,name:"name",type:"VARCHAR",size:"250",required:true,defaultValue:"<no name>")
         yearOfBirthColumn = new Column(typeMap,name:"year of birth",groovyName:"yearOfBirth",type:Types.INTEGER,size:"4")
     }

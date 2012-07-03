@@ -12,7 +12,7 @@ class DatabaseTest extends GroovyTestCase {
               
     void setUp() {
         typeMap = new TypeMap()          
-        idColumn = new Column(typeMap,name:"id",type:0,size:10,required:true,required:true,autoIncrement:true)     
+        idColumn = new Column(typeMap,name:"id",type:0,size:10,required:true,autoIncrement:true)
                   
         fred = new Table("fred")
         fred.columns << idColumn

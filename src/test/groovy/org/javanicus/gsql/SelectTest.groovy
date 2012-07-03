@@ -146,7 +146,7 @@ class SelectTest extends GroovyTestCase {
         }
     }
     
-    def tearDown() {
+    void tearDown() {
         super.tearDown()
         
         typeMap = null

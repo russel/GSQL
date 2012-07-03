@@ -1,0 +1,51 @@
+//  Gradle build for GSQL
+//
+//  Copyright © 2012 Russel Winder
+
+apply plugin: 'groovy'
+
+apply plugin: 'codenarc'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+version = '1.6.0'
+ext.artifactBase = 'GSQL'
+
+repositories {
+  mavenCentral ( )
+}
+
+dependencies {
+  groovy 'org.codehaus.groovy:groovy:2.0.0'
+  compile 'org.codehaus.groovy:groovy-sql:2.0.0'
+  compile 'log4j:log4j:1.2.17'
+  testCompile 'org.codehaus.groovy:groovy-test:2.0.0'
+  testCompile 'hsqldb:hsqldb:1.8.0.10'
+}
+
+task wrapper ( type : Wrapper , description : 'Set up gradlew.' ) {
+  gradleVersion = '1.0'
+}
+
+
+idea {
+  module {
+    excludeDirs += file ( 'gradle/' ) // Gradle directory including the wrapper subdirectory.
+    excludeDirs += file ( '.settings/' ) // Eclipse settings directory.
+    excludeDirs += file ( 'bin' ) // Eclipse compilation directory.
+    excludeDirs += file ( 'out' ) // IDEA compilation directory.
+    excludeDirs += file ( 'build' ) // Gradle compilation directory.
+  }
+  project {
+    ipr {
+      withXml { provider ->
+        final node =provider.asNode ( )
+        final component = provider.asNode ( ).component
+        node.component.find { it.'@name' == 'VcsDirectoryMappings' }.mapping[0].'@vcs' = 'Git'
+        final gradleSettings = node.appendNode ( 'component' , [ name : 'GradleSettings' ] )
+        gradleSettings.appendNode ( 'option', [ name : 'linkedProjectPath' , value : '$PROJECT_DIR$/build.gradle' ] )
+      }
+    }
+  }
+}

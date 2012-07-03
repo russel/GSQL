@@ -59,7 +59,7 @@ org.javanicus.gsql.SelectResultSetTest_A@cafe (id=2, b=false, l=4294967296, c="y
 	}
 
         assertEquals ('''\
-groovy.sql.GroovyResultSet@unknown (A_ID=2, B="No", L=4294967296, C="y", BIG_INT=4294967296, BIG_DEC=0.0001, S="a2")\
+groovy.sql.GroovyResultSet@unknown (A_ID=2, B='No', L=4294967296, C='y', BIG_INT=4294967296, BIG_DEC=0.0001, S='a2')\
 '''.replaceAll('\r\n', '\n'),
                 SQLResultObjectTest.fixDynaObject(s))
     }
