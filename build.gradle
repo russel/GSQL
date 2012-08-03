@@ -17,15 +17,15 @@ repositories {
 }
 
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:2.0.0'
-  compile 'org.codehaus.groovy:groovy-sql:2.0.0'
+  groovy 'org.codehaus.groovy:groovy:2.0.1'
+  compile 'org.codehaus.groovy:groovy-sql:2.0.1'
   compile 'log4j:log4j:1.2.17'
-  testCompile 'org.codehaus.groovy:groovy-test:2.0.0'
+  testCompile 'org.codehaus.groovy:groovy-test:2.0.1'
   testCompile 'hsqldb:hsqldb:1.8.0.10'
 }
 
 task wrapper ( type : Wrapper , description : 'Set up gradlew.' ) {
-  gradleVersion = '1.0'
+  gradleVersion = '1.1'
 }
 
 
