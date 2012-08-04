@@ -6,17 +6,20 @@
  */
 package org.javanicus.gsql;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import groovy.util.BuilderSupport;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 public class RelationalBuilder extends BuilderSupport {
     private TypeMap typeMap;
-    private Map factories;
+    private Map<String, Factory> factories;
     //    private Logger log = Logger.getLogger(getClass().getName());
     public RelationalBuilder(TypeMap typeMap) {
         this.typeMap = typeMap;
-        factories = new HashMap();
+        factories = new HashMap<>();
         factories.put("database",new DatabaseFactory());
         factories.put("table",new TableFactory());
         factories.put("column",new ColumnFactory());
@@ -24,9 +27,10 @@ public class RelationalBuilder extends BuilderSupport {
         factories.put("reference",new ReferenceFactory());
     }
     
-    private Map passThroughNodes = new HashMap();
+    //private Map<?, ?> passThroughNodes = new HashMap<Object, Object>();
     
-    protected void setParent(Object parent, Object child) {
+	@SuppressWarnings("unchecked")
+	protected void setParent(Object parent, Object child) {
 //        System.out.println("setParent(" + parent + "," + child + ")");
         
         if (child instanceof Reference) {
@@ -69,27 +73,29 @@ public class RelationalBuilder extends BuilderSupport {
         return name;
     }
 
-    protected Object createNode(Object name, Map attributes, Object value) {
+    // Groovy's BuilderSupport has not been marked up for generics. 
+    protected Object createNode(Object name, @SuppressWarnings("rawtypes") Map attributes, Object value) {
 //        System.out.println("createNode(name:" + name + ",attributes:" + attributes + ",value:" + value + ")");
         return name;
     }
     
-    protected Object createNode(Object name, Map attributes) {
+    // Groovy's BuilderSupport has not been marked up for generics. 
+    protected Object createNode(Object name, @SuppressWarnings("rawtypes") Map attributes) {
         //@todo - is this a suitable return for unrecognised node types?
         Object result = name;
 //        System.out.println("createNode(name:" + name + ",attributes:" + attributes + ")");
         String nodeName = (String)attributes.get("name");
-        Factory factory = (Factory)factories.get(name);
+        Factory factory = factories.get(name);
         if (factory != null) {
             result = factory.make(nodeName,attributes,null);
         }
         return result;
     }
     
-    private void setAttributes(Object result, Map attributes) {
-        Iterator itr = attributes.entrySet().iterator();
+    private void setAttributes(Object result, Map<?, ?> attributes) {
+        Iterator<?> itr = attributes.entrySet().iterator();
         while (itr.hasNext()) {
-            Map.Entry entry = (Map.Entry)itr.next();
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>)itr.next();
             try {
                 InvokerHelper.setProperty(result, (String)entry.getKey(), entry.getValue());
             }
@@ -100,17 +106,17 @@ public class RelationalBuilder extends BuilderSupport {
     }        
     
     private interface Factory {
-        Object make(String nodeName, Map attributes, Object value);
+        Object make(String nodeName, Map<?, ?> attributes, Object value);
     }
     private class DatabaseFactory implements Factory {
-        public Object make(String nodeName, Map attributes, Object value) {
+        public Object make(String nodeName, Map<?, ?> attributes, Object value) {
             Database database = new Database(nodeName);
             setAttributes(database,attributes);
             return database;
         }
     }
     private class TableFactory implements Factory {
-        public Object make(String nodeName, Map attributes, Object value) {
+        public Object make(String nodeName, Map<?, ?> attributes, Object value) {
             Table table = new Table(nodeName);
             setAttributes(table,attributes);
             table.init();
@@ -118,7 +124,7 @@ public class RelationalBuilder extends BuilderSupport {
         }
     }
     private class ColumnFactory implements Factory {
-        public Object make(String nodeName, Map attributes, Object value) {
+        public Object make(String nodeName, Map<?, ?> attributes, Object value) {
             Column column = new Column(typeMap);
             setAttributes(column,attributes);
             column.init();
@@ -126,14 +132,14 @@ public class RelationalBuilder extends BuilderSupport {
         }
     }
     private class ForeignKeyFactory implements Factory {
-        public Object make(String nodeName, Map attributes, Object value) {
+        public Object make(String nodeName, Map<?, ?> attributes, Object value) {
             ForeignKey foreignKey = new ForeignKey();
             setAttributes(foreignKey,attributes);
             return foreignKey;
         }
     }
     private class ReferenceFactory implements Factory {
-        public Object make(String nodeName, Map attributes, Object value) {
+        public Object make(String nodeName, Map<?, ?> attributes, Object value) {
             Reference reference = new Reference();
             setAttributes(reference,attributes);
             return reference;

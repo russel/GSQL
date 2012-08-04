@@ -6,8 +6,9 @@
  */
 package org.javanicus.gsql
 
-import java.io.*
-import java.sql.Types
+import java.sql.Types;
+
+import groovy.util.GroovyTestCase;
 
 class SqlGeneratorTest extends GroovyTestCase {
     def typeMap
@@ -79,7 +80,7 @@ create table xxx.individual (
         def s = testWriter.toString()
         expected = expected.replaceAll("\r\n", "\n");
         s = s.replaceAll("\r\n", "\n");
-        assertEquals (expected, s)
+        assertEquals(expected, s)
    }
 
 }
