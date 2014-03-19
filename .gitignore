@@ -7,3 +7,5 @@ GSQL.i*
 /bin/
 /build/
 /out/
+/.nb-gradle/private/
+/.nb-gradle/
