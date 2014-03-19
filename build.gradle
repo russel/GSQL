@@ -1,6 +1,6 @@
 //  Gradle build for GSQL
 //
-//  Copyright © 2012 Russel Winder
+//  Copyright © 2012, 2014  Russel Winder
 
 apply plugin: 'groovy'
 
@@ -9,42 +9,40 @@ apply plugin: 'codenarc'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
-version = '1.6.0'
+version = '1.6.0-SNAPSHOT'
 ext.artifactBase = 'GSQL'
 
+ext.groovyVersion = '2.2.2'
+
 repositories {
-  mavenCentral ( )
+  mavenCentral()
 }
 
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:2.0.1'
-  compile 'org.codehaus.groovy:groovy-sql:2.0.1'
+  compile "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+  compile "org.codehaus.groovy:groovy-sql:${project.ext.groovyVersion}"
   compile 'log4j:log4j:1.2.17'
-  testCompile 'org.codehaus.groovy:groovy-test:2.0.1'
+  testCompile "org.codehaus.groovy:groovy-test:${project.ext.groovyVersion}"
   testCompile 'hsqldb:hsqldb:1.8.0.10'
 }
 
-task wrapper ( type : Wrapper , description : 'Set up gradlew.' ) {
-  gradleVersion = '1.1'
+task wrapper(type: Wrapper, description: 'Set up gradlew.') {
+  gradleVersion = '1.11'
 }
 
 
 idea {
   module {
-    excludeDirs += file ( 'gradle/' ) // Gradle directory including the wrapper subdirectory.
-    excludeDirs += file ( '.settings/' ) // Eclipse settings directory.
-    excludeDirs += file ( 'bin' ) // Eclipse compilation directory.
-    excludeDirs += file ( 'out' ) // IDEA compilation directory.
-    excludeDirs += file ( 'build' ) // Gradle compilation directory.
+    excludeDirs += file('gradle/') // Gradle directory including the wrapper subdirectory.
+    excludeDirs += file('.settings/') // Eclipse settings directory.
+    excludeDirs += file('bin') // Eclipse compilation directory.
+    excludeDirs += file('out') // IDEA compilation directory.
+    excludeDirs += file('build') // Gradle compilation directory.
   }
   project {
     ipr {
       withXml { provider ->
-        final node =provider.asNode ( )
-        final component = provider.asNode ( ).component
-        node.component.find { it.'@name' == 'VcsDirectoryMappings' }.mapping[0].'@vcs' = 'Git'
-        final gradleSettings = node.appendNode ( 'component' , [ name : 'GradleSettings' ] )
-        gradleSettings.appendNode ( 'option', [ name : 'linkedProjectPath' , value : '$PROJECT_DIR$/build.gradle' ] )
+        provider.asNode().component.find{it.'@name' == 'VcsDirectoryMappings'}.mapping[0].'@vcs' = 'Git'
       }
     }
   }
