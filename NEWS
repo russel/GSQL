@@ -1,11 +1,14 @@
+GSQL 1.6.0
+==========
+
 - Introduced a Gradle build to replace the Ant and Maven builds.
-- Used Groovy 2.0.0
+- Used Groovy 2.2.2
 
 
 GSQL 1.5:
 =========
 
-- Ported to Groovy 1.5.4. Versions upto Groovy 1.5.3 will *not* work. 
+- Ported to Groovy 1.5.4. Versions upto Groovy 1.5.3 will *not* work.
 - Slightly improved the Join syntax: Join objects now have a
   whereColumn() which you can use to create correct WHERE conditions.
 - Classes derived from DynaObjects can now have properties just like
@@ -65,4 +68,3 @@ GSQL 1.0:
 =========
 
 Copied from old GSQL sources
-
